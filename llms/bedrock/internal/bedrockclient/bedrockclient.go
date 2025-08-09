@@ -33,9 +33,9 @@ func getProvider(modelID string) string {
 	if strings.Contains(modelID, ".nova-") || strings.Contains(modelID, "amazon.nova-") {
 		return "nova"
 	}
-	
+
 	parts := strings.Split(modelID, ".")
-	
+
 	// For backward compatibility with the original provider detection
 	switch {
 	case strings.Contains(modelID, "ai21"):
@@ -54,7 +54,7 @@ func getProvider(modelID string) string {
 	if len(parts) > 0 {
 		return parts[0]
 	}
-	
+
 	return ""
 }
 
@@ -78,6 +78,8 @@ func (c *Client) CreateCompletion(ctx context.Context,
 		return createAi21Completion(ctx, c.client, modelID, messages, options)
 	case "amazon":
 		return createAmazonCompletion(ctx, c.client, modelID, messages, options)
+	case "openai":
+		return createOpenAICompletion(ctx, c.client, modelID, messages, options)
 	case "nova":
 		return createNovaCompletion(ctx, c.client, modelID, messages, options)
 	case "anthropic":
@@ -87,7 +89,7 @@ func (c *Client) CreateCompletion(ctx context.Context,
 	case "meta":
 		return createMetaCompletion(ctx, c.client, modelID, messages, options)
 	default:
-		return nil, errors.New("unsupported provider")
+		return nil, errors.New("unsupported provider " + provider)
 	}
 }
 
